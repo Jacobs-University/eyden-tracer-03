@@ -15,29 +15,50 @@ namespace {
 
 void CBoundingBox::extend(const Vec3f& p)
 {
-	// --- PUT YOUR CODE HERE ---
+    // The function given above does most of the job for us here.
+    m_minPoint = Min3f(p, m_minPoint);
+    m_maxPoint = Max3f(p, m_maxPoint);
 }
 	
 void CBoundingBox::extend(const CBoundingBox& box)
 {
-	// --- PUT YOUR CODE HERE ---
+	extend(box.m_minPoint);
+	extend(box.m_maxPoint);
 }
 
 std::pair<CBoundingBox, CBoundingBox> CBoundingBox::split(int dim, float val) const
 {
-	// --- PUT YOUR CODE HERE ---
 	auto res = std::make_pair(*this, *this);
+	// this order must be maintained because of what the nodes in the tree expect.
+	res.first.m_maxPoint[dim] = val;
+	res.second.m_minPoint[dim] = val;
 	return res;
 }
 
 bool CBoundingBox::overlaps(const CBoundingBox& box) const
 {
-	// --- PUT YOUR CODE HERE ---
-	return false;
+    // this is rather trivial since AABB only need coordinate arithmetic.
+    for (int i = 0; i < 3; i++){
+        if (this->m_minPoint[i] > box.m_maxPoint[i])
+            return false;
+        if (this->m_maxPoint[i] < box.m_minPoint[i])
+            return false;
+    }
+    return true;
 }
 	
 void CBoundingBox::clip(const Ray& ray, double& t0, double& t1) const
 {
-	// --- PUT YOUR CODE HERE ---
+    for (int i = 0; i < 3; i++){
+        if (ray.dir[i] == 0)
+            continue;
+        float tmin = (m_minPoint[i] - ray.org[i]) / ray.dir[i];
+        float tmax = (m_maxPoint[i] - ray.org[i]) / ray.dir[i];
+        t0 = tmin > t0 ? tmin : t0;
+        t1 = tmax < t1 ? tmax : t1;
+        if (ray.dir[i] < 0)
+            swap(t0, t1);
+        if (t0 > t1) break;
+    }
 }
 	

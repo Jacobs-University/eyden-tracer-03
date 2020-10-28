@@ -43,9 +43,10 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
-		CBoundingBox bounds;
-		// --- PUT YOUR CODE HERE ---
-		return bounds;
+	    // Planes are infinite so the bounding box is infinite?
+        Vec3f minPoint = Vec3f::all(-Infty);
+        Vec3f maxPoint = Vec3f::all(Infty);
+        return CBoundingBox(minPoint, maxPoint);
 	}
 
 private:

@@ -52,8 +52,8 @@ If everything so far was implemented correctly, the Scene bounds will be: [-6, 0
 For more information please read the chapter 7.2 in the [thesis of Dr. Ingo Wald](http://www.sci.utah.edu/~wald/PhD/wald_phd.pdf).
 6. Implement the method ```std::shared_ptr<CBSPNode> build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` of the class ```CBSPTree```. Use the ideas presented at the lecture. As soon as you have reached a maximum depth (_e.g._ 20), or you have less then a minimum number of primitives (_e.g._ 3 or 4), stop subdividing and generate a leaf node. Otherweise, split your bounding box in the middle (in the maximum dimension), sort your current primitives into two vector left and right, and recursively call BuildTree with the respective bounding boxes and vector for left and right. Start subdivision with a list of all primitives, the total scene bounds, and an initial recursion depth of 0.<br>
 9. Render the scene and write the time needed for 1 frame T2 and speedup = T0 / T2 below:<br>
-**T2:** .......<br>
-**Speedup:** .......
+**T2:** 3'441 ms <br>
+**Speedup:** 14:57'793ms / 3'441ms = 840793 / 3441 = 244.345539087
 
 > A the solution for this problem can be found in OpenRT library: www.openrt.org However it is highly recommended to solve this problem using lecture slides only and resorting to the solution only as a last resort. 
 
