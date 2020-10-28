@@ -2,7 +2,7 @@
 **Dealine**: 29.10.2020
 
 Please put your name here:  
-**Name:** .......
+**Name:** Otmane Sabir
 ## Problem 1
 ### Rendering complex geometry (Points 5)
 Until now we have only hardcoded our scene geometry in main.cpp. This is of course not practical. In the new framework, a class ```CSolid``` is added. This class may contain complex geometry formed by multiple primitives. Such geometry may be saved / read from an .obj file. For this problem we will read _torus knot.obj_ file and rended this object, which consists of 12 960 triangles. To make the method work proceed as follows:
@@ -11,7 +11,7 @@ Until now we have only hardcoded our scene geometry in main.cpp. This is of cour
 3. Have a look at the file _torus knot.obj_ and at the class ```CSolid```. Study how triangles are stored in the obj-format and in the class. The _v_ ’s indicate a single 3d-vertex position, and the _f_ ’s (faces) are indecies to 3 vertex numbers a triangle consits of (please note that the face indecies are starting with **1 and not 0**).
 4. Implement function ```CScene::add(const CSolid& solid)``` which adds a solid to the scene.
 5. Make sure that you work with Release and not Debug and disable BSP support in CMake (if it was enabled). Render the scene and write the time needed for 1 frame below:<br>
-**T0:** .......
+**T0:** 14:57'793 ms
 
 > **Note:** Rendering may take several minutes.
 
