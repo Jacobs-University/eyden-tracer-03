@@ -66,9 +66,9 @@ The core idea of the kd-tree building algorithm is splitting a current bounding 
 1. Elaborate and implement your idea in ```ptr_bspnode_t CBSPTree::build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` for better choice of the _splitVal_ parameter. For example, define _splitVal_ in such a way, that the number of primitives in the current bounding box will be split by half. To check your implememntation you may chech the length of the left and right vectors with primitives after the split.
 2. Elaborate and implement your idea in ```ptr_bspnode_t CBSPTree::build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` for better choice of the _splitDim_ parameter. For example, define _splitVal_ as a function of max dimension _and_ depth of the recursion.
 3. Experiment with your ideas. Chose the one, which gives the fastest result and render the scene and write the time needed for 1 frame T3 and speedup = T0 / T3 below:<br>
-**T3:** .......<br>
-**Speedup:** .......
-
+**T3:** 281 ms<br>
+**Speedup:** 53526 ms/281 ms=190 times
+I have tried the code from the slides (https://slides.com/sergejkosov/spatial-index-structures/fullscreen#/0/22) and tried it with the parallelization from part 2. The frame rendered within 281 ms (see screenshot in renders folder) but I am pretty sure that I did something wrong because a speedup of almost 190 times seems like a lot.
 ## Submission
 Please submit the assignment by making a pull request.
 **Important** : Please make sure that
