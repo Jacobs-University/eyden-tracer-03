@@ -10,6 +10,9 @@ namespace {
 	CBoundingBox calcBoundingBox(const std::vector<ptr_prim_t>& vpPrims)
 	{
 		CBoundingBox res;
+		for (auto pPrim : vpPrims)
+			res.extend(pPrim->getBoundingBox());
+		return res;
 		// --- PUT YOUR CODE HERE ---
 	}
 
@@ -40,6 +43,8 @@ public:
 	 * @param minPrimitives The minimum number of primitives in a leaf-node.
 	 * This parameters should be alway above 1.
 	 */
+
+	//this is the example given in the assignment: max depth 20, stop when we have less than 3 primitives
 	void build(const std::vector<ptr_prim_t>& vpPrims, size_t maxDepth = 20, size_t minPrimitives = 3) {
 		m_treeBoundingBox = calcBoundingBox(vpPrims);
 		m_maxDepth = maxDepth;
@@ -55,7 +60,14 @@ public:
 	bool intersect(Ray& ray) const
 	{
 		// --- PUT YOUR CODE HERE ---
-		return false;
+		double min = 0;
+		double max = ray.t;
+		m_treeBoundingBox.clip(ray, min, max);
+		if (max < min) {
+			return false;  // no intersection
+		}
+		bool intersection = m_root->intersect(ray, min, max);
+		return intersection;
 	}
 
 
@@ -69,7 +81,7 @@ private:
 	 */
 	ptr_bspnode_t build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)
 	{
-		// Check for stoppong criteria
+		// Check for stopping criteria
 		if (depth >= m_maxDepth || vpPrims.size() <= m_minPrimitives)
 			return std::make_shared<CBSPNode>(vpPrims);                                     // => Create a leaf node and break recursion
 
@@ -81,7 +93,7 @@ private:
 		CBoundingBox& lBox = splitBoxes.first;
 		CBoundingBox& rBox = splitBoxes.second;
 
-		// Second order the primitives into new nounding boxes
+		// Second order the primitives into new bounding boxes
 		std::vector<ptr_prim_t> lPrim;
 		std::vector<ptr_prim_t> rPrim;
 		for (auto pPrim : vpPrims) {
