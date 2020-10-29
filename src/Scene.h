@@ -61,8 +61,11 @@ public:
 	 */
 	void add(const CSolid& solid)
 	{
-		// --- PUT YOUR CODE HERE ---
+		for (const auto& pPrim : solid->getPrims())
+			m_vpPrims.push_back(pPrim);
 	}
+
+
 	/**
 	 * @brief (Re-) Build the BSP tree for the current geometry present in scene
 	 * @details This function takes into accound all the primitives in scene and builds the BSP tree with the root node in \b m_pBSPTree variable.
