@@ -47,7 +47,7 @@ std::pair<CBoundingBox, CBoundingBox> CBoundingBox::split(int dim, float val) co
 
 	box2.m_minPoint = this->m_minPoint;
 	box2.m_minPoint[dim] = this->m_minPoint[dim] + val;
-	box2.m_maxPoint = box2->m_maxPoint;
+	box2.m_maxPoint = box2.m_maxPoint;
 
 	auto res = std::make_pair(box1, box2);
 
