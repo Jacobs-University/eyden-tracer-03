@@ -11,7 +11,7 @@ Until now we have only hardcoded our scene geometry in main.cpp. This is of cour
 3. Have a look at the file _torus knot.obj_ and at the class ```CSolid```. Study how triangles are stored in the obj-format and in the class. The _v_ ’s indicate a single 3d-vertex position, and the _f_ ’s (faces) are indecies to 3 vertex numbers a triangle consits of (please note that the face indecies are starting with **1 and not 0**).
 4. Implement function ```CScene::add(const CSolid& solid)``` which adds a solid to the scene.
 5. Make sure that you work with Release and not Debug and disable BSP support in CMake (if it was enabled). Render the scene and write the time needed for 1 frame below:<br>
-**T0:** 1 minute 32 seconds
+**T0:** 1 minute 32.482 seconds
 
 > **Note:** Rendering may take several minutes.
 
@@ -29,8 +29,8 @@ In order to use not one but all cores of CPU proceed as follows:
 1. Study the OpenCV function for parallel data processing ```parallel_for_```: [How to use the OpenCV parallel_for_ to parallelize your code](https://docs.opencv.org/master/d7/dff/tutorial_how_to_use_OpenCV_parallel_for_.html)
 2. In main.cpp file rewrite the main rendering loop (lines 53 - 57), by paralellizing the loop ```for (int y = 0; y < img.rows; y++)``` with help of ```parallel_for_``` function and enclosing the inner body into a lambda-expression. You do not need to parallelize the inner loop ```for (int x = 0; x < img.cols; x++)```.
 3. Render the scene and write the time needed for 1 frame T1 and speedup = T0 / T1 below:<br>
-**T1:** 27 seconds<br>
-**Speedup:** 92/27 = 3.4
+**T1:** 27.931 seconds<br>
+**Speedup:** 92.482/27.931 = 3.31 
 
 ## Problem 3
 ### Implementation of a kd-tree acceleration structure (Points 30)
@@ -53,7 +53,7 @@ For more information please read the chapter 7.2 in the [thesis of Dr. Ingo Wald
 6. Implement the method ```std::shared_ptr<CBSPNode> build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` of the class ```CBSPTree```. Use the ideas presented at the lecture. As soon as you have reached a maximum depth (_e.g._ 20), or you have less then a minimum number of primitives (_e.g._ 3 or 4), stop subdividing and generate a leaf node. Otherweise, split your bounding box in the middle (in the maximum dimension), sort your current primitives into two vector left and right, and recursively call BuildTree with the respective bounding boxes and vector for left and right. Start subdivision with a list of all primitives, the total scene bounds, and an initial recursion depth of 0.<br>
 9. Render the scene and write the time needed for 1 frame T2 and speedup = T0 / T2 below:<br>
 **T2:** Average 830ms<br>
-**Speedup:** 92/ 0.83 = 110.8
+**Speedup:** 92.482/ 0.830 = 110.42
 
 > A the solution for this problem can be found in OpenRT library: www.openrt.org However it is highly recommended to solve this problem using lecture slides only and resorting to the solution only as a last resort. 
 
@@ -66,6 +66,8 @@ The core idea of the kd-tree building algorithm is splitting a current bounding 
 1. Elaborate and implement your idea in ```ptr_bspnode_t CBSPTree::build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` for better choice of the _splitVal_ parameter. For example, define _splitVal_ in such a way, that the number of primitives in the current bounding box will be split by half. To check your implememntation you may chech the length of the left and right vectors with primitives after the split.
 2. Elaborate and implement your idea in ```ptr_bspnode_t CBSPTree::build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` for better choice of the _splitDim_ parameter. For example, define _splitVal_ as a function of max dimension _and_ depth of the recursion.
 3. Experiment with your ideas. Chose the one, which gives the fastest result and render the scene and write the time needed for 1 frame T3 and speedup = T0 / T3 below:<br>
+
+Idea is when we split the box exactly by half, one side could weight more than the other, for example 5 on the left and 2 on the right. What we can do is to find location of every primitive point and sort them and pick the middle one.
 **T3:** .......<br>
 **Speedup:** .......
 
