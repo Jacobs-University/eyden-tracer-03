@@ -30,7 +30,7 @@ In order to use not one but all cores of CPU proceed as follows:
 2. In main.cpp file rewrite the main rendering loop (lines 53 - 57), by paralellizing the loop ```for (int y = 0; y < img.rows; y++)``` with help of ```parallel_for_``` function and enclosing the inner body into a lambda-expression. You do not need to parallelize the inner loop ```for (int x = 0; x < img.cols; x++)```.
 3. Render the scene and write the time needed for 1 frame T1 and speedup = T0 / T1 below:<br>
 **T1:** 27 seconds<br>
-**Speedup:** 1 minute 25 seconds
+**Speedup:** 92/27 = 3.4
 
 ## Problem 3
 ### Implementation of a kd-tree acceleration structure (Points 30)
@@ -53,7 +53,7 @@ For more information please read the chapter 7.2 in the [thesis of Dr. Ingo Wald
 6. Implement the method ```std::shared_ptr<CBSPNode> build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` of the class ```CBSPTree```. Use the ideas presented at the lecture. As soon as you have reached a maximum depth (_e.g._ 20), or you have less then a minimum number of primitives (_e.g._ 3 or 4), stop subdividing and generate a leaf node. Otherweise, split your bounding box in the middle (in the maximum dimension), sort your current primitives into two vector left and right, and recursively call BuildTree with the respective bounding boxes and vector for left and right. Start subdivision with a list of all primitives, the total scene bounds, and an initial recursion depth of 0.<br>
 9. Render the scene and write the time needed for 1 frame T2 and speedup = T0 / T2 below:<br>
 **T2:** Average 830ms<br>
-**Speedup:** 1 minute 31 seconds 170ms
+**Speedup:** 92/ 0.83 = 110.8
 
 > A the solution for this problem can be found in OpenRT library: www.openrt.org However it is highly recommended to solve this problem using lecture slides only and resorting to the solution only as a last resort. 
 
