@@ -51,12 +51,12 @@ Mat RenderFrame(void)
 	Ray ray;                                          		// primary ray
 
 	parallel_for_(cv::Range(0, img.rows), [&](const Range& r) {
-		for (int y = r.start; y < r.end; y++){
+		for (int y = r.start; y < r.end; y++)
 		 for (int x = 0; x < img.cols; x++) {
 			scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
 			img.at<Vec3f>(y, x) = scene.RayTrace(ray);
 		 }
-	});
+		});
 	img.convertTo(img, CV_8UC3, 255);
 	return img;
 
