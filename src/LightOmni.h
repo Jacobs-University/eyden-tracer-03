@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ILight.h"
-#include "Ray.h"
+#include "ray.h"
 
 /**
  * @brief Point light source class
