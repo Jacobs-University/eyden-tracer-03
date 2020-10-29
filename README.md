@@ -68,8 +68,7 @@ The core idea of the kd-tree building algorithm is splitting a current bounding 
 3. Experiment with your ideas. Chose the one, which gives the fastest result and render the scene and write the time needed for 1 frame T3 and speedup = T0 / T3 below:<br>
 
 Idea is when we split the box exactly by half, one side could weight more than the other, for example 5 on the left and 2 on the right. What we can do is to find location of every primitive point and sort them and pick the middle one.
-**T3:** .......<br>
-**Speedup:** .......
+
 
 ## Submission
 Please submit the assignment by making a pull request.
