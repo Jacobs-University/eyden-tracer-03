@@ -30,10 +30,6 @@ void CBoundingBox::extend(const CBoundingBox& box)
 std::pair<CBoundingBox, CBoundingBox> CBoundingBox::split(int dim, float val) const
 {
 	// --- PUT YOUR CODE HERE ---
-	RT_ASSERT(dim >= 0 && dim < 3);
-    RT_ASSERT_MSG(val > m_minPoint[dim] && val < m_maxPoint[dim], 
-					"Splitting value %f does not lie in AABB range [%f: %f]", 
-							val, m_minPoint[dim], m_maxPoint[dim]);
         
     auto res = std::make_pair(*this, *this);
 	res.first.m_maxPoint[dim] = val;
