@@ -11,6 +11,9 @@ namespace {
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		for (auto p : vpPrims)
+			res.extend(p->getBoundingBox());
+		return res;
 	}
 
 	// Returns the best dimension index for next split
