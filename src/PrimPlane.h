@@ -45,7 +45,21 @@ public:
 	{
 		CBoundingBox bounds;
 		// --- PUT YOUR CODE HERE ---
-		return bounds;
+		Vec3f plusinf = (INFINITY, INFINITY, INFINITY);
+		Vec3f minusinf = (-INFINITY, -INFINITY, -INFINITY);
+		Vec3f minPoint = plusinf;
+		Vec3f maxPoint = minusinf;
+		//iterate over 3D vector for each of the three values, loop copied from tutorial:
+		for (int i = 0; i < 3; i++){
+			if (m_normal.val[i] == 1) {
+				minPoint.val[i] = m_origin.val[i];
+				maxPoint.val[i] = m_origin.val[i];
+			}
+			else {
+				break;
+			}
+		}
+		return CBoundingBox(minPoint, maxPoint);
 	}
 
 private:
