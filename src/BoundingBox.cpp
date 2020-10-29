@@ -30,7 +30,7 @@ void CBoundingBox::extend(const Vec3f& p)
 void CBoundingBox::extend(const CBoundingBox& box)
 {
 	this->extend(box.m_minPoint);
-	this->extent(box.m_maxPoint);
+	this->extend(box.m_maxPoint);
 	// --- PUT YOUR CODE HERE ---
 }
 
@@ -41,13 +41,13 @@ std::pair<CBoundingBox, CBoundingBox> CBoundingBox::split(int dim, float val) co
 	CBoundingBox  box1;
 	CBoundingBox  box2;
 	
-    box1->m_maxPoint = this->m_maxPoint;
-	box1->m_maxPoint[dim] = this->m_maxPoint[dim] - val;
-	box1->m_minPoint = this->m_minPoint;
+    box1.m_maxPoint = this->m_maxPoint;
+	box1.m_maxPoint[dim] = this->m_maxPoint[dim] - val;
+	box1.m_minPoint = this->m_minPoint;
 
-	box2->m_minPoint = this->m_minPoint;
-	box2->m_minPoint[dim] = this->m_minPoint[dim] + val;
-	box2->m_maxPoint = box2->m_maxPoint;
+	box2.m_minPoint = this->m_minPoint;
+	box2.m_minPoint[dim] = this->m_minPoint[dim] + val;
+	box2.m_maxPoint = box2->m_maxPoint;
 
 	auto res = std::make_pair(box1, box2);
 
@@ -57,7 +57,7 @@ std::pair<CBoundingBox, CBoundingBox> CBoundingBox::split(int dim, float val) co
 bool CBoundingBox::overlaps(const CBoundingBox& box) const
 {
 	if (this->m_minPoint[0] < box.m_maxPoint[0] && box.m_minPoint[0] < this->m_maxPoint[0] &&
-		this->m_minPoint[1] < box.m_maxPoint[1] && box.m_minPoiint[1] < this->m_maxPoint[1] &&
+		this->m_minPoint[1] < box.m_maxPoint[1] && box.m_minPoint[1] < this->m_maxPoint[1] &&
 		this->m_minPoint[2] < box.m_maxPoint[2] && box.m_minPoint[2] < this->m_maxPoint[2])
 	{
 
@@ -98,7 +98,7 @@ void CBoundingBox::clip(const Ray& ray, double& t0, double& t1) const
 			}
 			if (vec0[i] > vec1[i]) {
 				auto tmp = vec1;
-				vec1 = vec00;
+				vec1 = vec0;
 				vec0 = tmp;
 			}
 

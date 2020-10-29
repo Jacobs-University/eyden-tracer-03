@@ -61,7 +61,7 @@ public:
 	 */
 	void add(const CSolid& solid)
 	{
-		for (const auto& pPrim : solid->getPrims())
+		for (const auto& pPrim : solid.getPrims())
 			m_vpPrims.push_back(pPrim);
 	}
 

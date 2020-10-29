@@ -77,7 +77,7 @@ public:
 		res.extend(m_b);
 		res.extend(m_c);
 		res.m_minPoint = std::numeric_limits<Vec3f>::infinity();
-		res.m_max = std::numeric_limits<Vec3f>::infinity() * (-1);
+		res.m_maxPoint = std::numeric_limits<Vec3f>::infinity() * (-1);
 		return res;
 	}
 

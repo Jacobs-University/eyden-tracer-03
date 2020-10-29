@@ -72,7 +72,7 @@ public:
 	 */
 	Vec3f getMaxPoint(void) const { return m_maxPoint; }
 	
-private:
+protected:
 	Vec3f m_minPoint;	///< The minimal point defying the size of the bounding box
 	Vec3f m_maxPoint;	///< The maximal point defying the size of the bounding box
 };
