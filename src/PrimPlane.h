@@ -43,12 +43,32 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
-		CBoundingBox bounds;
 		// --- PUT YOUR CODE HERE ---
+		/*	we check for a union between the plane and the box.
+		*	the bounding box extends the plane, so in all of the
+		*	3 vector directions, except in normal direction.
+		*/
+		//the plane goes to infinity in two axis
+
+
+		Vec3f PointOne, PointTwo;
+		//check which axis is the normal
+		for(int i=0; i<3; i++)
+			if(m_normal[i] == 1)
+			{
+				PointOne[i] = m_origin[i];
+				PointTwo[i] = m_origin[i];
+			}
+			else
+			{
+				PointOne[i] = -Infty;
+				PointTwo[i] = Infty;
+			}
+		CBoundingBox bounds(PointOne, PointTwo);
 		return bounds;
 	}
 
-private:
+private://i think these are reversed??
 	Vec3f m_normal;	///< Point on the plane
 	Vec3f m_origin;	///< Normal to the plane
 };

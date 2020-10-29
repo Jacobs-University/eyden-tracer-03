@@ -70,6 +70,14 @@ public:
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		/*  make sure that each point of the triangle
+		*	is inside the box.
+		*/
+
+		res.extend(m_a);
+		res.extend(m_b);
+		res.extend(m_c);
+
 		return res;
 	}
 
