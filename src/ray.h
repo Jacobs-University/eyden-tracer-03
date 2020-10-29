@@ -6,6 +6,8 @@
 
 class CPrim;
 
+// virtual CBoundingBox getBoundingBox(void) const = 0;
+
 /// Basic ray structure
 struct Ray
 {

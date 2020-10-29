@@ -41,12 +41,12 @@ public:
 		return m_normal;
 	}
 
-	virtual CBoundingBox getBoundingBox(void) const override
-	{
-		CBoundingBox bounds;
-		// --- PUT YOUR CODE HERE ---
-		return bounds;
-	}
+	// virtual CBoundingBox getBoundingBox(void) const override
+	// {
+	// 	CBoundingBox bounds;
+	// 	// --- PUT YOUR CODE HERE ---
+	// 	return bounds;
+	// }
 
 private:
 	Vec3f m_normal;	///< Point on the plane

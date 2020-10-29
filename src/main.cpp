@@ -30,11 +30,11 @@ Mat RenderFrame(void)
 
 	// Load scene description
 #ifdef WIN32
-	const std::string dataPath = "../data/";
+	const std::string dataPath = "../data/Torus Knot.obj";
 #else
-	const std::string dataPath = "../../data/";
+	const std::string dataPath = "data/Torus Knot.obj";
 #endif
-	CSolid solid(pShader, dataPath + "Torus Knot.obj");
+	CSolid solid(pShader, dataPath);
 	scene.add(solid);
 
 	// Build BSPTree
@@ -48,14 +48,18 @@ Mat RenderFrame(void)
 	scene.add(std::make_shared<CLightOmni>(pointLightIntensity, lightPosition3));
 
 	Mat img(resolution, CV_32FC3);							// image array
-	Ray ray;                                          		// primary ray
+	// Ray ray;                                          		// primary ray
 
-	for (int y = 0; y < img.rows; y++)
-		for (int x = 0; x < img.cols; x++) {
-			scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
-			img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+	parallel_for_(Range(0, img.rows), [&](const Range& range){
+		for (int y = range.start; y < range.end; y++){
+			for (int x = 0; x < img.cols; x++) {
+				Ray ray1;
+				scene.getActiveCamera()->InitRay(ray1, x, y);	// initialize ray
+				img.at<Vec3f>(y, x) = scene.RayTrace(ray1);
+			}
 		}
-	
+	});
+
 	img.convertTo(img, CV_8UC3, 255);
 	return img;
 }
@@ -67,6 +71,7 @@ int main(int argc, char* argv[])
 	DirectGraphicalModels::Timer::stop();
 	imshow("Image", img);
 	waitKey();
-	imwrite("D:/renders/torus knot.jpg", img);
+	imwrite("src/renders/torus knot render.jpg", img);
+	
 	return 0;
 }

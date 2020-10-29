@@ -66,12 +66,13 @@ public:
 		return normalize(m_edge1.cross(m_edge2));
 	}
 
-	virtual CBoundingBox getBoundingBox(void) const override
-	{
-		CBoundingBox res;
-		// --- PUT YOUR CODE HERE ---
-		return res;
-	}
+
+	// virtual CBoundingBox getBoundingBox(void) const override
+	// {
+	// 	CBoundingBox res;
+	// 	// --- PUT YOUR CODE HERE ---
+	// 	return res;
+	// }
 
 
 private:

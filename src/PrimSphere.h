@@ -64,12 +64,12 @@ public:
 		return normal;
 	}
 
-	virtual CBoundingBox getBoundingBox(void) const override
-	{
-		CBoundingBox res;
-		// --- PUT YOUR CODE HERE ---
-		return res;
-	}
+	// virtual CBoundingBox getBoundingBox(void) const override
+	// {
+	// 	CBoundingBox res;
+	// 	// --- PUT YOUR CODE HERE ---
+	// 	return res;
+	// }
 
 
 private:

@@ -67,6 +67,7 @@ private:
 	 * @param vpPrims The vector of pointers to the primitives included in the bounding box \b box
 	 * @param depth The distance from the root node of the tree
 	 */
+	// virtual CBoundingBox getBoundingBox(void) const = 0;
 	ptr_bspnode_t build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)
 	{
 		// Check for stoppong criteria

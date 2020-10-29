@@ -15,12 +15,16 @@ namespace {
 
 void CBoundingBox::extend(const Vec3f& p)
 {
-	// --- PUT YOUR CODE HERE ---
+	// resize min and max point to be just right for p
+	m_minPoint = Min3f(p, m_minPoint);
+    m_maxPoint = Max3f(p, m_maxPoint);
 }
 	
 void CBoundingBox::extend(const CBoundingBox& box)
 {
-	// --- PUT YOUR CODE HERE ---
+	// extend the box using new min and max points, could this also work with getMinPoint() and getMaxPoint()?
+	extend(box.m_minPoint);
+	extend(box.m_maxPoint);
 }
 
 std::pair<CBoundingBox, CBoundingBox> CBoundingBox::split(int dim, float val) const
@@ -38,6 +42,6 @@ bool CBoundingBox::overlaps(const CBoundingBox& box) const
 	
 void CBoundingBox::clip(const Ray& ray, double& t0, double& t1) const
 {
-	// --- PUT YOUR CODE HERE ---
+    
 }
 	

@@ -52,7 +52,7 @@ public:
 	 * @brief Returns the minimum axis-aligned bounding box, which contain the primitive
 	 * @returns The bounding box, which contain the primitive
 	 */
-	virtual CBoundingBox getBoundingBox(void) const = 0;
+	// virtual CBoundingBox getBoundingBox(void) const = 0;
 	/**
 	 * @brief Returns the primitive's shader
 	 * @return The pointer to the primitive's shader
