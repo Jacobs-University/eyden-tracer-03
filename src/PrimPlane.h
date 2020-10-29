@@ -43,9 +43,21 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
-		CBoundingBox bounds;
+		/*CBoundingBox bounds;
 		// --- PUT YOUR CODE HERE ---
-		return bounds;
+		bounds.getMinPoint() = -1 * std::numeric_limits<Vec3f>::infinity();
+		bounds.getMaxPoint() = std::numeric_limits<Vec3f>::infinity();
+		return bounds;*/
+
+		Vec3f minPoint = Vec3f::all(-Infty);
+		Vec3f maxPoint = Vec3f::all(Infty);
+		for (int i = 0; i < 3; i++)
+			if (m_normal.val[i] == 1) {
+				minPoint.val[i] = m_origin.val[i];
+				maxPoint.val[i] = m_origin.val[i];
+				break;
+			}
+		return CBoundingBox(minPoint, maxPoint);
 	}
 
 private:

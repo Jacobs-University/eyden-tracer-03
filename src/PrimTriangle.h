@@ -3,6 +3,7 @@
 #pragma once
 
 #include "IPrim.h"
+#include "Ray.h"
 
 // ================================ Triangle Primitive Class ================================
 /**
@@ -70,6 +71,11 @@ public:
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		/*res.getMinPoint() = std::numeric_limits<Vec3f>::infinity();
+		res.getMaxPoint() = -1 * std::numeric_limits<Vec3f>::infinity();*/
+		res.extend(m_a);
+		res.extend(m_b);
+		res.extend(m_c);
 		return res;
 	}
 

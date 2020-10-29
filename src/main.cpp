@@ -18,10 +18,10 @@ Mat RenderFrame(void)
 {
 	// Camera resolution
 	const Size resolution(800, 600);
-	
+
 	// Define a scene
 	CScene scene;
-	
+
 	// Add camera to scene
 	scene.add(std::make_shared<CCameraPerspective>(resolution, Vec3f(0, 3.5f, -13), Vec3f(0, 0, 1), Vec3f(0, 1, 0), 60));
 
@@ -39,15 +39,16 @@ Mat RenderFrame(void)
 
 	// Build BSPTree
 	scene.buildAccelStructure(20, 3);
-	
+
 	Vec3f pointLightIntensity(3, 3, 3);
 	Vec3f lightPosition2(-3, 5, 4);
 	Vec3f lightPosition3(0, 1, 4);
-	
+
 	scene.add(std::make_shared<CLightOmni>(pointLightIntensity, lightPosition2));
 	scene.add(std::make_shared<CLightOmni>(pointLightIntensity, lightPosition3));
 
 	Mat img(resolution, CV_32FC3);							// image array
+
 	Ray ray;                                          		// primary ray
 
 	for (int y = 0; y < img.rows; y++)
@@ -55,7 +56,21 @@ Mat RenderFrame(void)
 			scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
 			img.at<Vec3f>(y, x) = scene.RayTrace(ray);
 		}
-	
+
+	/*Ray ray;                                          		// primary ray
+	parallel_for_(Range(0, img.rows), [&](const Range& range)
+		{
+			for (int y = range.start; y < range.end; y++)
+				for (int x = 0; x < img.cols; x++) {
+					Ray ray;
+
+					scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
+					img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+				}
+
+			img.convertTo(img, CV_8UC3, 255);
+			return img;
+		});*/
 	img.convertTo(img, CV_8UC3, 255);
 	return img;
 }

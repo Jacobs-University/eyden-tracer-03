@@ -3,7 +3,7 @@
 #pragma once
 
 #include "types.h"
-
+#include "ray.h"
 class CBSPNode;
 using ptr_bspnode_t = std::shared_ptr<CBSPNode>;
 
@@ -47,11 +47,32 @@ public:
 	bool intersect(Ray& ray, double t0, double t1) const
 	{
 		if (isLeaf()) {
-			// --- PUT YOUR CODE HERE ---
-			return false;
-		} else {
-			// --- PUT YOUR CODE HERE ---
-			return false;
+			for (auto& pPrim : m_vpPrims)
+				pPrim->intersect(ray);
+			return (ray.hit && ray.t < t1 + Epsilon);
+		}
+		else {
+			// distnace from ray origin to the split plane of the current volume (may be negative)
+			double d = (m_splitVal - ray.org[m_splitDim]) / ray.dir[m_splitDim];
+
+			auto frontNode = (ray.dir[m_splitDim] < 0) ? Right() : Left();
+			auto backNode = (ray.dir[m_splitDim] < 0) ? Left() : Right();
+
+			if (d <= t0) {
+				// t0..t1 is totally behind d, only go to back side
+				return backNode->intersect(ray, t0, t1);
+			}
+			else if (d >= t1) {
+				// t0..t1 is totally in front of d, only go to front side
+				return frontNode->intersect(ray, t0, t1);
+			}
+			else {
+				// travese both children. front one first, back one last
+				if (frontNode->intersect(ray, t0, d))
+					return true;
+
+				return backNode->intersect(ray, d, t1);
+			}
 		}
 	}
 
