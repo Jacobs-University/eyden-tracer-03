@@ -68,7 +68,14 @@ public:
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
-		return res;
+		// source used: https://gamedev.stackexchange.com/questions/159710/getting-the-bounding-box-of-a-sphere
+		//make 3D vector and fill with radius value
+		Vec3f radiusvec = (m_radius, m_radius, m_radius);
+		//do what was done in source mentioned
+		Vec3f minbound = m_origin - radiusvec;
+		Vec3f maxbound = m_origin + radiusvec;
+		//return box
+		return CBoundingBox(minbound, maxbound);
 	}
 
 
