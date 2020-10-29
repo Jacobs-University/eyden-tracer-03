@@ -48,13 +48,18 @@ Mat RenderFrame(void)
 	scene.add(std::make_shared<CLightOmni>(pointLightIntensity, lightPosition3));
 
 	Mat img(resolution, CV_32FC3);							// image array
-	Ray ray;                                          		// primary ray
-
-	for (int y = 0; y < img.rows; y++)
-		for (int x = 0; x < img.cols; x++) {
-			scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
-			img.at<Vec3f>(y, x) = scene.RayTrace(ray);
-		}
+	
+	// for (int y = 0; y < img.rows; y++)
+	cv::parallel_for_(cv::Range(0, img.rows), [&](const Range& range) 
+	{
+		for (int y = range.start; y < range.end; y++)
+			for (int x = 0; x < img.cols; x++) 
+			{
+				Ray ray;                                         // primary ray
+				scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
+				img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+			}	
+	};
 	
 	img.convertTo(img, CV_8UC3, 255);
 	return img;
