@@ -62,6 +62,11 @@ public:
 	void add(const CSolid& solid)
 	{
 		// --- PUT YOUR CODE HERE ---
+		//here we add the object's primitives to the primitives vector of the scene.
+
+		for (const auto& pPrim : solid.getPrims())
+			m_vpPrims.push_back(pPrim);
+			
 	}
 	/**
 	 * @brief (Re-) Build the BSP tree for the current geometry present in scene

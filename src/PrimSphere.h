@@ -66,8 +66,26 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
-		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		/*	the bounding box would have the dimentions
+		*	of the spheres diameter.
+		*	the distance from the origin to the min&max
+		*	points is the radius length.
+		*/
+		Vec3f minPoint, maxPoint;
+		/*	taking or adding the radius to the points
+		*	for all axes; x, y, z, will get us to the 
+		*	box's corners for min&max.
+		*/
+		minPoint[0] = m_origin[0] - m_radius;
+		minPoint[1] = m_origin[1] - m_radius;
+		minPoint[2] = m_origin[2] - m_radius;
+
+		maxPoint[0] = m_origin[0] + m_radius;
+		maxPoint[1] = m_origin[1] + m_radius;
+		maxPoint[2] = m_origin[2] + m_radius;
+
+		CBoundingBox res(minPoint, maxPoint);
 		return res;
 	}
 

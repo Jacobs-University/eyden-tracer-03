@@ -46,12 +46,38 @@ public:
 	 */
 	bool intersect(Ray& ray, double t0, double t1) const
 	{
+		/*	source: http://www.sci.utah.edu/~wald/PhD/wald_phd.pdf
+		*	from chapter 7.2.2.1 - Recursive kd-Tree Traversal.
+		*/
+
 		if (isLeaf()) {
+			// ---	 PUT YOUR CODE HERE ---
+			for (auto& pPrim : m_vpPrims)
+				pPrim->intersect(ray);//intersect all triangles
+			return (ray.hit && ray.t < t1 +Epsilon);
+		}
+		else {
 			// --- PUT YOUR CODE HERE ---
-			return false;
-		} else {
-			// --- PUT YOUR CODE HERE ---
-			return false;
+			double dist = (m_splitVal - ray.org[m_splitDim]) /ray.dir[m_splitDim];
+
+			auto frontNode = (ray.dir[m_splitDim] < 0) ? Right() : Left();
+			auto backNode = (ray.dir[m_splitDim] < 0) ? Left() : Right();
+
+			if (dist <= t0)
+			{// first case, d <= t_near <= t_far : choose back side
+				return backNode->intersect(ray, t0, t1);
+			}
+			else if (dist >= t1)
+			{// second case, t_near <= t_far <= d : choose front side
+				return frontNode->intersect(ray, t0, t1);
+			}
+			else
+			{//third case, travese both in turn
+				if (frontNode->intersect(ray, t0, dist))
+					return true;//early ray termination
+
+				return (backNode->intersect(ray, dist, t1));
+			}
 		}
 	}
 
