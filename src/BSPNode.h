@@ -48,10 +48,35 @@ public:
 	{
 		if (isLeaf()) {
 			// --- PUT YOUR CODE HERE ---
-			return false;
-		} else {
-			// --- PUT YOUR CODE HERE ---
-			return false;
+			for (auto it = m_vpPrims.begin(); it != m_vpPrims.end(); ++it) {
+				auto& pPrim = *it;
+				pPrim->intersect(ray);
+			}
+			return (ray.hit && ray.t < t1 + Epsilon);
+		} 
+
+		else if(!isLeaf()) {
+		//cases as stated on the slides (https://slides.com/sergejkosov/spatial-index-structures/fullscreen#/0/24), copied from slide 26
+		// distance from ray origin to the split plane of the current volume (may be negative)
+			double d = (m_splitVal - ray.org[m_splitDim]) / ray.dir[m_splitDim];
+
+			auto frontNode = (ray.dir[m_splitDim] < 0) ? Right() : Left();
+			auto backNode = (ray.dir[m_splitDim] < 0) ? Left() : Right();
+
+			if (d <= t0) {//intersect with left child only
+				// t0..t1 is totally behind d, only go to back side
+				return backNode->intersect(ray, t0, t1);
+			}
+			else if (d >= t1) {//intersect with right child only
+				// t0..t1 is totally in front of d, only go to front side
+				return frontNode->intersect(ray, t0, t1);
+			}
+			else {
+				// traveses both children. front one first, back one last
+				if (frontNode->intersect(ray, t0, d))
+					return true;
+				return backNode->intersect(ray, d, t1);
+			}
 		}
 	}
 
