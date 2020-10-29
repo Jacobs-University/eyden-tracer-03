@@ -70,6 +70,10 @@ public:
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		//as explained in tutorial, triangle vertices are extended
+		res.extend(m_a);
+		res.extend(m_b);
+		res.extend(m_c);
 		return res;
 	}
 
