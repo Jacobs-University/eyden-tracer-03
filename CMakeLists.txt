@@ -45,7 +45,7 @@ add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 
 # Options
 include(CMakeDependentOption)
-option(ENABLE_BSP "Use Binary Space Partitioning (BSP) Tree for optimized ray traversal" ON)
+option(ENABLE_BSP "Use Binary Space Partitioning (BSP) Tree for optimized ray traversal" OFF)
 
 add_executable(eyden-tracer ${INCLUDE} ${SOURCES} ${HEADERS})
 
