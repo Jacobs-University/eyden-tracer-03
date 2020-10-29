@@ -29,7 +29,7 @@ In order to use not one but all cores of CPU proceed as follows:
 1. Study the OpenCV function for parallel data processing ```parallel_for_```: [How to use the OpenCV parallel_for_ to parallelize your code](https://docs.opencv.org/master/d7/dff/tutorial_how_to_use_OpenCV_parallel_for_.html)
 2. In main.cpp file rewrite the main rendering loop (lines 53 - 57), by paralellizing the loop ```for (int y = 0; y < img.rows; y++)``` with help of ```parallel_for_``` function and enclosing the inner body into a lambda-expression. You do not need to parallelize the inner loop ```for (int x = 0; x < img.cols; x++)```.
 3. Render the scene and write the time needed for 1 frame T1 and speedup = T0 / T1 below:<br>
-**T1:** .......<br>
+**T1:** 27 seconds<br>
 **Speedup:** 1 minute 25 seconds
 
 ## Problem 3
