@@ -46,12 +46,50 @@ public:
 	 */
 	bool intersect(Ray& ray, double t0, double t1) const
 	{
+		CBSPNode Node1;
+		CBSPNode Node2;
 		if (isLeaf()) {
-			// --- PUT YOUR CODE HERE ---
-			return false;
+			bool hit = false;
+			for (auto& pPrim : m_vpPrims)
+				hit |= pPrim->intersect(ray);
+			return hit;
 		} else {
-			// --- PUT YOUR CODE HERE ---
-			return false;
+			
+			double dis = (m_splitVal - ray.org[m_splitDim]) / ray.dir[m_splitDim];
+
+			
+			
+			if (ray.dir[m_splitDim] < 0) {
+				Node1 = Right();
+			}
+			else {
+				Node1 = Left();
+			  
+			} 
+			
+
+			if (ray.dir[m_splitDim] < 0) { 
+				Node2 = Left(); 
+			}
+			else { 
+				Node2 = Right();
+			}
+
+			if (dis <= t0) {
+				return Node2->intersect(ray, t0, t1);
+			}
+			else if (dis >= t1) {
+				return Node1->intersect(ray, t0, t1);
+			}
+			else if (Node1->intersect(ray, t0, dis)) {
+				return true;
+			}
+			else
+			{
+				
+				return Node2->intersect(ray, dis, t1);
+			}
+
 		}
 	}
 

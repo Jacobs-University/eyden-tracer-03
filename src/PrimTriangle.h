@@ -68,8 +68,16 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
+
+
+
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		res.extend(m_a);
+		res.extend(m_b);
+		res.extend(m_c);
+		res.m_minPoint = std::numeric_limits<Vec3f>::infinity();
+		res.m_maxPoint = std::numeric_limits<Vec3f>::infinity() * (-1);
 		return res;
 	}
 

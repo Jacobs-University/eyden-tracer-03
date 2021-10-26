@@ -54,8 +54,16 @@ public:
 	 */
 	bool intersect(Ray& ray) const
 	{
-		// --- PUT YOUR CODE HERE ---
-		return false;
+		double dist = 0;
+		double dist2 = ray.t;
+
+		m_treeBoundingBox.clip(ray, dist, dist2);
+		if (dist < dist2) {
+			return false;
+		}
+		else {
+			return m_root->intersect(ray, dist, dist2);
+		}
 	}
 
 
