@@ -62,6 +62,10 @@ public:
 	void add(const CSolid& solid)
 	{
 		// --- PUT YOUR CODE HERE ---
+
+		for (size_t i = 0; i < solid.getPrims().size(); ++i) {
+			this->m_vpPrims.push_back(solid.getPrims()[i]);
+		}
 	}
 	/**
 	 * @brief (Re-) Build the BSP tree for the current geometry present in scene
