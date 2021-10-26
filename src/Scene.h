@@ -34,7 +34,7 @@ public:
 	 * @brief Adds a new primitive to the scene
 	 * @param prim Pointer to the primitive
 	 */
-	void add(const ptr_prim_t pPrim)
+	void add(const ptr_prim_t& pPrim)
 	{
 		m_vpPrims.push_back(pPrim);
 	}
@@ -61,7 +61,8 @@ public:
 	 */
 	void add(const CSolid& solid)
 	{
-		// --- PUT YOUR CODE HERE ---
+	    for (const auto& prim : solid.getPrims())
+	        add(prim);
 	}
 	/**
 	 * @brief (Re-) Build the BSP tree for the current geometry present in scene

@@ -69,27 +69,40 @@ private:
 	 */
 	ptr_bspnode_t build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)
 	{
-		// Check for stoppong criteria
+		// Check for stopping criteria
 		if (depth >= m_maxDepth || vpPrims.size() <= m_minPrimitives)
 			return std::make_shared<CBSPNode>(vpPrims);                                     // => Create a leaf node and break recursion
 
 		// else -> prepare for creating a branch node
 		// First split the bounding volume into two halfes
-		int     splitDim = MaxDim(box.getMaxPoint() - box.getMinPoint());                   // Calculate split dimension as the dimension where the aabb is the widest
-		float   splitVal = (box.getMinPoint()[splitDim] + box.getMaxPoint()[splitDim]) / 2; // Split the aabb exactly in two halfes
+
+        int splitDim = 0;
+		if ((depth + 1) % 3 == 0)
+		    splitDim = 2;
+		if ((depth + 1) % 2 == 0)
+		    splitDim = 1;
+
+		// Calculate split dimension as the dimension where the aabb is the widest
+		int nPrims = vpPrims.size();
+		std::vector<float> primVals;
+		primVals.reserve(nPrims);
+		std::transform(vpPrims.cbegin(), vpPrims.cend(), std::back_inserter(primVals), [splitDim](const ptr_prim_t& prim){ return prim->getBoundingBox().getMinPoint()[splitDim];});
+		std::sort(primVals.begin(), primVals.end());
+        float   splitVal = primVals[nPrims/2]; // Split the aabb exactly in two halfes
 		auto    splitBoxes = box.split(splitDim, splitVal);
 		CBoundingBox& lBox = splitBoxes.first;
 		CBoundingBox& rBox = splitBoxes.second;
 
-		// Second order the primitives into new nounding boxes
-		std::vector<ptr_prim_t> lPrim;
-		std::vector<ptr_prim_t> rPrim;
-		for (auto pPrim : vpPrims) {
-			if (pPrim->getBoundingBox().overlaps(lBox))
-				lPrim.push_back(pPrim);
-			if (pPrim->getBoundingBox().overlaps(rBox))
-				rPrim.push_back(pPrim);
-		}
+        std::vector<ptr_prim_t> lPrim;
+        std::vector<ptr_prim_t> rPrim;
+
+        // Second order the primitives into new nounding boxes
+        for (const auto& pPrim : vpPrims) {
+            if (pPrim->getBoundingBox().overlaps(lBox))
+                lPrim.push_back(pPrim);
+            if (pPrim->getBoundingBox().overlaps(rBox))
+                rPrim.push_back(pPrim);
+        }
 
 		// Next build recursively 2 subtrees for both halfes
 		auto pLeft = build(lBox, lPrim, depth + 1);

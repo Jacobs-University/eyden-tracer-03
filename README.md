@@ -2,7 +2,7 @@
 **Dealine**: 28.10.2021
 
 Please put your name here:  
-**Name:** .......
+**Name:** Otmane Sabir
 ## Problem 1
 ### Rendering complex geometry (Points 5)
 Until now we have only hardcoded our scene geometry in main.cpp. This is of course not practical. In the new framework, a class ```CSolid``` is added. This class may contain complex geometry formed by multiple primitives. Such geometry may be saved / read from an .obj file. For this problem we will read _torus knot.obj_ file and rended this object, which consists of 12 960 triangles. To make the method work proceed as follows:
@@ -11,7 +11,7 @@ Until now we have only hardcoded our scene geometry in main.cpp. This is of cour
 3. Have a look at the file _torus knot.obj_ and at the class ```CSolid```. Study how triangles are stored in the obj-format and in the class. The _v_ ’s indicate a single 3d-vertex position, and the _f_ ’s (faces) are indecies to 3 vertex numbers a triangle consits of (please note that the face indecies are starting with **1 and not 0**).
 4. Implement function ```CScene::add(const CSolid& solid)``` which adds a solid to the scene.
 5. Make sure that you work with Release and not Debug and disable BSP support in CMake (if it was enabled). Render the scene and write the time needed for 1 frame below:<br>
-**T0:** .......
+**T0:** 14:57'793 ms
 
 > **Note:** Rendering may take several minutes.
 
@@ -29,8 +29,8 @@ In order to use not one but all cores of CPU proceed as follows:
 1. Study the OpenCV function for parallel data processing ```parallel_for_```: [How to use the OpenCV parallel_for_ to parallelize your code](https://docs.opencv.org/master/d7/dff/tutorial_how_to_use_OpenCV_parallel_for_.html)
 2. In main.cpp file rewrite the main rendering loop (lines 53 - 57), by paralellizing the loop ```for (int y = 0; y < img.rows; y++)``` with help of ```parallel_for_``` function and enclosing the inner body into a lambda-expression. You do not need to parallelize the inner loop ```for (int x = 0; x < img.cols; x++)```.
 3. Render the scene and write the time needed for 1 frame T1 and speedup = T0 / T1 below:<br>
-**T1:** .......<br>
-**Speedup:** .......
+**T1:** 5:56'905<br>
+**Speedup:** 840793 / 356905 = 2.35
 
 ## Problem 3
 ### Implementation of a kd-tree acceleration structure (Points 30)
@@ -52,8 +52,8 @@ If everything so far was implemented correctly, the Scene bounds will be: [-6, 0
 For more information please read the chapter 7.2 in the [thesis of Dr. Ingo Wald](http://www.sci.utah.edu/~wald/PhD/wald_phd.pdf).
 6. Implement the method ```std::shared_ptr<CBSPNode> build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` of the class ```CBSPTree```. Use the ideas presented at the lecture. As soon as you have reached a maximum depth (_e.g._ 20), or you have less then a minimum number of primitives (_e.g._ 3 or 4), stop subdividing and generate a leaf node. Otherweise, split your bounding box in the middle (in the maximum dimension), sort your current primitives into two vector left and right, and recursively call BuildTree with the respective bounding boxes and vector for left and right. Start subdivision with a list of all primitives, the total scene bounds, and an initial recursion depth of 0.<br>
 9. Render the scene and write the time needed for 1 frame T2 and speedup = T0 / T2 below:<br>
-**T2:** .......<br>
-**Speedup:** .......
+**T2:** 3'441 ms <br>
+**Speedup:** 14:57'793ms / 3'441ms = 840793 / 3441 = 244.345539087
 
 > A the solution for this problem can be found in OpenRT library: www.openrt.org However it is highly recommended to solve this problem using lecture slides only and resorting to the solution only as a last resort. 
 
@@ -66,8 +66,25 @@ The core idea of the kd-tree building algorithm is splitting a current bounding 
 1. Elaborate and implement your idea in ```ptr_bspnode_t CBSPTree::build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` for better choice of the _splitVal_ parameter. For example, define _splitVal_ in such a way, that the number of primitives in the current bounding box will be split by half. To check your implememntation you may chech the length of the left and right vectors with primitives after the split.
 2. Elaborate and implement your idea in ```ptr_bspnode_t CBSPTree::build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` for better choice of the _splitDim_ parameter. For example, define _splitVal_ as a function of max dimension _and_ depth of the recursion.
 3. Experiment with your ideas. Chose the one, which gives the fastest result and render the scene and write the time needed for 1 frame T3 and speedup = T0 / T3 below:<br>
-**T3:** .......<br>
-**Speedup:** .......
+**T3:** 3'614 ms<br>
+**Speedup:** 840793 / 3614 = 232.648
+
+## Problem 4 - Answer
+
+1. In order to optimize the splitting value we have to rethink how we currently find this value. In case of bad
+space distribution of the geometry, for example 10 elements in one corner and 1 element further away from the cluster of 10
+then the split using at the half edge would give us a distribution of 10 elements in one box and only 1 in the other. Another way to find the
+optimal split value is using this method:
+    *  Iterate over all primitive of the node and get their min points value in the given dimension.
+        This has a similar effect of projecting those points on the split dimension axis of the plane.
+    *  We then sort all of these values from increasing or decreasing.
+    * Pick the value at index nPrimitives/2.
+2. For this I decided to implement the idea in the lecture of picking an axis depending on the iteration
+an switching after each iteration. Here we use some simple modulo operator arithmetic to know which iteration it
+is and which split dimension to use next.
+
+  
+
 
 ## Submission
 Please submit the assignment by making a pull request.

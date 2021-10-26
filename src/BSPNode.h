@@ -3,6 +3,7 @@
 #pragma once
 
 #include "types.h"
+#include "ray.h"
 
 class CBSPNode;
 using ptr_bspnode_t = std::shared_ptr<CBSPNode>;
@@ -44,16 +45,33 @@ public:
 	 * @retval true If ray \b ray intersects any object
 	 * @retval false otherwise
 	 */
-	bool intersect(Ray& ray, double t0, double t1) const
-	{
-		if (isLeaf()) {
-			// --- PUT YOUR CODE HERE ---
-			return false;
-		} else {
-			// --- PUT YOUR CODE HERE ---
-			return false;
-		}
-	}
+    bool intersect(Ray& ray, double t0, double t1) const
+    {
+        /* Relied on the contents of the slides for this question */
+        if (isLeaf()) {
+            for (auto& pPrim : m_vpPrims)
+                pPrim->intersect(ray);
+            return ray.hit && ray.t < t1 + Epsilon;
+        }
+        else {
+            double d = (m_splitVal - ray.org[m_splitDim]) / ray.dir[m_splitDim];
+
+            auto frontNode = (ray.dir[m_splitDim] < 0) ? Right() : Left();
+            auto backNode  = (ray.dir[m_splitDim] < 0) ? Left() : Right();
+
+            if (d <= t0) {
+                return backNode->intersect(ray, t0, t1);
+            }
+            else if (d >= t1) {
+                return frontNode->intersect(ray, t0, t1);
+            }
+            else {
+                if (frontNode->intersect(ray, t0, d))
+                    return true;
+                return backNode->intersect(ray, d, t1);
+            }
+        }
+    }
 
 	/**
 	 * @brief Returns the pointer to the \a left child
