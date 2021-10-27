@@ -47,11 +47,34 @@ public:
 	bool intersect(Ray& ray, double t0, double t1) const
 	{
 		if (isLeaf()) {
-			// --- PUT YOUR CODE HERE ---
-			return false;
+			bool hit = false;
+			for (const auto prim : m_vpPrims) {
+				hit |= prim->intersect(ray);
+			}
+			return hit;
 		} else {
-			// --- PUT YOUR CODE HERE ---
-			return false;
+			// dist between split and ray
+			double dist = (m_splitVal - ray.org[m_splitDim]) / ray.dir[m_splitDim];
+			
+			//determin which node is in front
+			ptr_bspnode_t front;
+			ptr_bspnode_t back;
+			if (ray.dir[m_splitDim] < 0) {
+				front = Right();
+				back  = Left();
+			} else {
+				front = Left();
+				back  = Right();
+			}
+			
+			if (dist <= t0) { //try back
+				return back->intersect(ray, t0, t1);
+			}
+			if (dist >= t1) { //try front
+				return front->intersect(ray, t0, t1);
+			}
+			//try both
+			return front->intersect(ray, t0, dist) || back->intersect(ray, dist, t1);
 		}
 	}
 

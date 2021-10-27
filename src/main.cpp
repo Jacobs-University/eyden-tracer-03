@@ -32,7 +32,7 @@ Mat RenderFrame(void)
 #ifdef WIN32
 	const std::string dataPath = "../data/";
 #else
-	const std::string dataPath = "../../data/";
+	const std::string dataPath = "../data/";//"../../data/";
 #endif
 	CSolid solid(pShader, dataPath + "Torus Knot.obj");
 	scene.add(solid);
@@ -48,13 +48,16 @@ Mat RenderFrame(void)
 	scene.add(std::make_shared<CLightOmni>(pointLightIntensity, lightPosition3));
 
 	Mat img(resolution, CV_32FC3);							// image array
-	Ray ray;                                          		// primary ray
 
-	for (int y = 0; y < img.rows; y++)
-		for (int x = 0; x < img.cols; x++) {
-			scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
-			img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+	parallel_for_(Range(0, img.rows), [&](const Range& range) {
+		for (int y = range.start; y < range.end; y++) {
+			Ray ray;											//declare here so each thread has its own
+			for (int x = 0; x < img.cols; x++) {
+				scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
+				img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+			}
 		}
+	});
 	
 	img.convertTo(img, CV_8UC3, 255);
 	return img;
@@ -67,6 +70,6 @@ int main(int argc, char* argv[])
 	DirectGraphicalModels::Timer::stop();
 	imshow("Image", img);
 	waitKey();
-	imwrite("D:/renders/torus knot.jpg", img);
+	imwrite("./torus knot.jpg", img);
 	return 0;
 }

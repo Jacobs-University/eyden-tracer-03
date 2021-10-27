@@ -10,7 +10,10 @@ namespace {
 	CBoundingBox calcBoundingBox(const std::vector<ptr_prim_t>& vpPrims)
 	{
 		CBoundingBox res;
-		// --- PUT YOUR CODE HERE ---
+		for (const auto prim : vpPrims) {
+			res.extend(prim->getBoundingBox());
+		}
+		return res;
 	}
 
 	// Returns the best dimension index for next split
@@ -54,8 +57,12 @@ public:
 	 */
 	bool intersect(Ray& ray) const
 	{
-		// --- PUT YOUR CODE HERE ---
-		return false;
+		double t0, t1;
+		m_treeBoundingBox.clip(ray, t0, t1);
+		if (t1 < t0) {
+			return false;
+		}
+		return m_root->intersect(ray, t0, t1);
 	}
 
 
@@ -69,19 +76,43 @@ private:
 	 */
 	ptr_bspnode_t build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)
 	{
-		// Check for stoppong criteria
+		
+		// Check for stopping criteria
 		if (depth >= m_maxDepth || vpPrims.size() <= m_minPrimitives)
 			return std::make_shared<CBSPNode>(vpPrims);                                     // => Create a leaf node and break recursion
 
 		// else -> prepare for creating a branch node
 		// First split the bounding volume into two halfes
-		int     splitDim = MaxDim(box.getMaxPoint() - box.getMinPoint());                   // Calculate split dimension as the dimension where the aabb is the widest
-		float   splitVal = (box.getMinPoint()[splitDim] + box.getMaxPoint()[splitDim]) / 2; // Split the aabb exactly in two halfes
+		
+		int splitDim = depth % 3;                   // Calculate split dimension as the dimension where the aabb is the widest
+		// int splitDim = MaxDim(box.getMaxPoint() - box.getMinPoint());                   // Calculate split dimension as the dimension where the aabb is the widest
+		
+		
+		//average the location of all prims in node
+		// Vec3f avrg = Vec3f::all(0);
+		// for (const auto prim : vpPrims) {
+			// auto primBox = prim->getBoundingBox();
+			// avrg += 0.5 * (primBox.getMinPoint() - primBox.getMaxPoint()) + primBox.getMinPoint();
+		// }
+		// avrg *= 1.0f / vpPrims.size();
+		
+		//find the mid point of all prims in node
+		// std::vector<float> foo;
+		// for (const auto prim : vpPrims) {
+			// auto primBox = prim->getBoundingBox();
+			// foo.push_back(0.5 * (primBox.getMinPoint()[splitDim] - primBox.getMaxPoint()[splitDim]) + primBox.getMinPoint()[splitDim]);
+		// }
+		// sort(foo.begin(), foo.end());
+		
+		// float splitVal = (foo[foo.size()/2] + foo[foo.size()/2 +1]) / 2;
+		// float splitVal = avrg[splitDim];
+		float splitVal = (box.getMinPoint()[splitDim] + box.getMaxPoint()[splitDim]) / 2; // Split the aabb exactly in two halfes
+		
 		auto    splitBoxes = box.split(splitDim, splitVal);
 		CBoundingBox& lBox = splitBoxes.first;
 		CBoundingBox& rBox = splitBoxes.second;
 
-		// Second order the primitives into new nounding boxes
+		// Second order the primitives into new bounding boxes
 		std::vector<ptr_prim_t> lPrim;
 		std::vector<ptr_prim_t> rPrim;
 		for (auto pPrim : vpPrims) {
@@ -90,6 +121,11 @@ private:
 			if (pPrim->getBoundingBox().overlaps(rBox))
 				rPrim.push_back(pPrim);
 		}
+
+		// int diff = abs(lPrim.size() - rPrim.size());
+		// if (diff > 1) {
+			// std::cout << diff << std::endl;
+		// }
 
 		// Next build recursively 2 subtrees for both halfes
 		auto pLeft = build(lBox, lPrim, depth + 1);
