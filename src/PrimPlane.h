@@ -44,7 +44,8 @@ public:
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
 		CBoundingBox bounds;
-		// --- PUT YOUR CODE HERE ---
+		bounds.extend(Vec3f::all(Infty));
+		bounds.extend(Vec3f::all(-Infty));
 		return bounds;
 	}
 
