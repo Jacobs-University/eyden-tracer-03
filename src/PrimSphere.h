@@ -66,8 +66,9 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
-		CBoundingBox res;
+		
 		// --- PUT YOUR CODE HERE ---
+		CBoundingBox res(this->m_origin - Vec3f::all(this->m_radius), this->m_origin + Vec3f::all(this->m_radius););
 		return res;
 	}
 

@@ -48,10 +48,35 @@ public:
 	{
 		if (isLeaf()) {
 			// --- PUT YOUR CODE HERE ---
-			return false;
+			for (size_t i = 0; i < this->m_vpPrims; ++i) {
+				this->m_vpPrims[i].intersect(ray);
+
+			}
+			return ray.hit && ray.t <= t1;
 		} else {
 			// --- PUT YOUR CODE HERE ---
-			return false;
+
+			double d = (this->m_splitVal - ray.org[this->m_splitDim]) / ray.dir[this->m_splitDim];
+
+            auto leftBox = (ray.dir[this->m_splitDim] < 0) ? Right() : Left();
+            auto rightBox  = (ray.dir[this->m_splitDim] < 0) ? Left() : Right();
+
+            if (d <= t0) {
+                
+                return rightBox->intersect(ray, t0, t1);
+            }
+            else if (d >= t1) {
+                
+                return leftBox->intersect(ray, t0, t1);
+            }
+            else {
+                
+                if (leftBox->intersect(ray, t0, d))
+                    return true;
+
+                return rightBox->intersect(ray, d, t1);
+            }
+		
 		}
 	}
 
