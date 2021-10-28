@@ -70,6 +70,11 @@ public:
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+
+		res.extend(this->m_a);
+		res.extend(this->m_b);
+		res.extend(this->m_c);
+
 		return res;
 	}
 

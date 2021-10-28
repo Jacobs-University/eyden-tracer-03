@@ -45,7 +45,44 @@ public:
 		m_maxDepth = maxDepth;
 		m_minPrimitives = minPrimitives;
 		std::cout << "Scene bounds are : " << m_treeBoundingBox << std::endl;
+
+
 		m_root = build(m_treeBoundingBox, vpPrims, 0);
+	}
+
+	std::shared_ptr<CBSPNode> build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth) {
+		if (depth > this->m_maxDepth || vpPrims.size() <= this->m_minPrimitives) {
+			return std::shared_ptr<CBSPNode>(vpPrims);
+		}
+
+		int splitDim = MaxDim(box.getMaxPoint() - box.getMinPoint())
+		float splitValue = box.getMaxPoint[splitDim] - box.getMinPoint()[splitDim];
+
+		auto boxes = box.splitBoxes(splitDim, splitValue);
+		CBoundingBox& f = boxes.first;
+		CBoundingBox& s = boxes.second;
+
+		std::vector<ptr_prim_t> leftBox;
+		std::vector<ptr_prim_t> rightBox;
+
+		for (size_t i = 0; i < vpPrims.size(); ++i) {
+
+			if (vpPrims[i].getBoundingBox().overlaps(f)) {
+				leftBox.push_back(vpPrims[i]);
+			}
+
+			if (vpPrims[i].getBoundingBox().overlaps(s)) {
+				rightBox.push_back(vpPrims[i]);
+			}
+		}
+
+		auto leftChild = build(f, leftBox, depth + 1);
+		auto rightChild = build(s, rightChild, depth + 1);
+
+		return std::shared_ptr<CBSPNode>(splitDim, splitValue, leftChild, rightChild);
+
+
+
 	}
 	/**
 	 * @brief Checks whether the ray \b ray intersects a primitive.
@@ -55,7 +92,31 @@ public:
 	bool intersect(Ray& ray) const
 	{
 		// --- PUT YOUR CODE HERE ---
+
+		if (ray.hit) {
+			float begin = 0;
+			float end = ray.t;
+
+			this->m_treeBoundingBox.clip(ray, begin, end);
+
+			if (begin > end) {
+				return false;
+			}
+
+			return this->m_root->intersect(ray, begin, end);
+		}
 		return false;
+	}
+
+	CBoundingBox calcBoundingBox(const std::vector<ptr_prim_t>& vpPrims) {
+		
+		CBoundingBox res;
+
+		for (size_t i = 0; i < vpPrims.size(); ++i) {
+			res.extend(vpPrims[i].getBoundingBox());
+		}
+
+		return res;
 	}
 
 

@@ -45,6 +45,8 @@ public:
 	{
 		CBoundingBox bounds;
 		// --- PUT YOUR CODE HERE ---
+		bounds.m_minPoint = Vec3f::all(-Infty);
+		bounds.m_maxPoint - Vec3f::all(Infty);
 		return bounds;
 	}
 
