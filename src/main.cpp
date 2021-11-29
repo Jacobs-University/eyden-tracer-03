@@ -32,7 +32,7 @@ Mat RenderFrame(void)
 #ifdef WIN32
 	const std::string dataPath = "../data/";
 #else
-	const std::string dataPath = "../../data/";
+	const std::string dataPath = "/Users/amartyavats/Downloads/CG/HW5/eyden-tracer-03/data/";
 #endif
 	CSolid solid(pShader, dataPath + "Torus Knot.obj");
 	scene.add(solid);

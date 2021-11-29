@@ -68,6 +68,7 @@ public:
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		res =  CBoundingBox(m_origin - Vec3f::all(m_radius), m_origin + Vec3f::all(m_radius));
 		return res;
 	}
 
