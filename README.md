@@ -2,7 +2,7 @@
 **Dealine**: 28.10.2021
 
 Please put your name here:  
-**Name:** Amartya Vatsw
+**Name:** Amartya Vats
 ## Problem 1
 ### Rendering complex geometry (Points 5)
 Until now we have only hardcoded our scene geometry in main.cpp. This is of course not practical. In the new framework, a class ```CSolid``` is added. This class may contain complex geometry formed by multiple primitives. Such geometry may be saved / read from an .obj file. For this problem we will read _torus knot.obj_ file and rended this object, which consists of 12 960 triangles. To make the method work proceed as follows:
