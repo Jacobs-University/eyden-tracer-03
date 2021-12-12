@@ -48,10 +48,38 @@ public:
 	{
 		if (isLeaf()) {
 			// --- PUT YOUR CODE HERE ---
-			return false;
+			//return false;
+
+			for (auto& pPrim : m_vpPrims)
+				pPrim->intersect(ray);
+			
+			return (ray.hit && ray.t < t1 + Epsilon);
+
 		} else {
 			// --- PUT YOUR CODE HERE ---
-			return false;
+			//return false;
+
+			double element = (m_splitVal - ray.org[m_splitDim]) / ray.dir[m_splitDim];
+
+			auto frontNode = (ray.dir[m_splitDim] < 0) ? Right() : Left();
+			auto backNode = (ray.dir[m_splitDim] < 0) ? Left() : Right();
+
+			if (element <= t0)
+			{
+				return backNode->intersect(ray, t0, t1);
+			}
+			else if (element >= t1)
+			{
+				return frontNode->intersect(ray, t0, t1);
+			}
+			else 
+			{
+				if (frontNode->intersect(ray, t0, d))
+					return true;
+
+				return backNode->intersect(ray, d, t1);
+			}
+
 		}
 	}
 

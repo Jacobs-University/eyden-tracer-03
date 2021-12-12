@@ -11,6 +11,12 @@ namespace {
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+
+		for (auto pPrim : vpPrims)
+			res.extend(pPrim->getBoundingBox());
+		
+		return res;
+
 	}
 
 	// Returns the best dimension index for next split
@@ -55,7 +61,17 @@ public:
 	bool intersect(Ray& ray) const
 	{
 		// --- PUT YOUR CODE HERE ---
-		return false;
+		//return false;
+
+		double t0 = 0;
+		double t1 = ray.t;
+		
+		m_treeBoundingBox.clip(ray, t0, t1);
+		
+		if (t1 < t0)
+			return false;  
+
+		return m_root->intersect(ray, t0, t1);
 	}
 
 
