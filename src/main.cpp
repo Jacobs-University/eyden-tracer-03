@@ -29,8 +29,10 @@ Mat RenderFrame(void)
 	auto pShader = std::make_shared<CShaderEyelight>(Vec3f::all(1));
 
 	// Load scene description
+
+//I had to change this line to my file path because it wasn't working for me before
 #ifdef WIN32
-	const std::string dataPath = "../data/";
+	const std::string dataPath = "C:/Users/katri/Documents/GitHub/eyden-tracer-03/data/";
 #else
 	const std::string dataPath = "../../data/";
 #endif
@@ -49,12 +51,16 @@ Mat RenderFrame(void)
 
 	Mat img(resolution, CV_32FC3);							// image array
 	Ray ray;                                          		// primary ray
-
-	for (int y = 0; y < img.rows; y++)
-		for (int x = 0; x < img.cols; x++) {
-			scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
-			img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+	parallel_for_(Range(0, img.rows), [&](const Range& range) {
+		for (int y = range.start; y < range.end; y++) {
+			for (int x = 0; x < img.cols; x++) {
+				Ray ray;
+				scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
+				img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+			}
 		}
+	});
+
 	
 	img.convertTo(img, CV_8UC3, 255);
 	return img;
@@ -67,6 +73,8 @@ int main(int argc, char* argv[])
 	DirectGraphicalModels::Timer::stop();
 	imshow("Image", img);
 	waitKey();
-	imwrite("D:/renders/torus knot.jpg", img);
+	//I changed this line too because it didn't save for me
+	//imwrite("C:/renders/torus knotparallel.jpg", img);
+	imwrite("C:/Users/katri/Documents/GitHub/eyden-tracer-03/renders/ torus knot.jpg", img);
 	return 0;
 }
