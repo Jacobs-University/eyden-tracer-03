@@ -11,6 +11,9 @@ namespace {
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		for (auto pPrim : vpPrims)
+			res.extend(pPrim->getBoundingBox());
+		return res;
 	}
 
 	// Returns the best dimension index for next split
@@ -55,7 +58,12 @@ public:
 	bool intersect(Ray& ray) const
 	{
 		// --- PUT YOUR CODE HERE ---
-		return false;
+		double t0 = 0;
+		double t1 = ray.t;
+		m_treeBoundingBox.clip(ray, t0, t1);
+		if (t1 < t0) return false;  // no intersection with the bounding box
+
+		return m_root->intersect(ray, t0, t1);
 	}
 
 
@@ -75,11 +83,31 @@ private:
 
 		// else -> prepare for creating a branch node
 		// First split the bounding volume into two halfes
-		int     splitDim = MaxDim(box.getMaxPoint() - box.getMinPoint());                   // Calculate split dimension as the dimension where the aabb is the widest
-		float   splitVal = (box.getMinPoint()[splitDim] + box.getMaxPoint()[splitDim]) / 2; // Split the aabb exactly in two halfes
-		auto    splitBoxes = box.split(splitDim, splitVal);
+		int splitDim = MaxDim(box.getMaxPoint() - box.getMinPoint());                  
+		// Calculate split dimension as the dimension where the aabb is the widest
+		//----------------------------------------------------------------------
+		std::vector<double> prim_dist;  //we store the values of primitive distances in this vector
+		for (auto pPrim : vpPrims) { //split values are going to be balanced equally
+			//we find the primitive points is the centre 
+			Vec3f prim_p = ((pPrim->getBoundingBox().getMaxPoint() - //we check how many prims we have
+				pPrim->getBoundingBox().getMinPoint()) / 2); //we divide by half
+			double dist_p = prim_p[splitDim] - box.getMinPoint()[splitDim];   //finding the distance
+			prim_dist.push_back(dist_p);
+		}
+		sort(prim_dist.begin(), prim_dist.end());
+		//we take the middle to balance Left&Right Prims
+		int mid_p = floor(prim_dist.size() / 2); // finding mid point
+		float splitVal = prim_dist.at(mid_p);
+		//---------------------------------------------------------------------
+		//float   splitVal = (box.getMinPoint()[splitDim] + box.getMaxPoint()[splitDim]) / 2; // Split the aabb exactly in two halfes
+		auto splitBoxes = box.split(splitDim, splitVal);
 		CBoundingBox& lBox = splitBoxes.first;
 		CBoundingBox& rBox = splitBoxes.second;
+		/*
+		For the second part of task 4, I could not implement it, but what I would have done is to find the distance of primitives
+		from the longest edge and calculate the sum from the origin to the primitives and find the average and split it from there.
+		*/
+
 
 		// Second order the primitives into new nounding boxes
 		std::vector<ptr_prim_t> lPrim;
@@ -89,7 +117,7 @@ private:
 				lPrim.push_back(pPrim);
 			if (pPrim->getBoundingBox().overlaps(rBox))
 				rPrim.push_back(pPrim);
-		}
+		} 
 
 		// Next build recursively 2 subtrees for both halfes
 		auto pLeft = build(lBox, lPrim, depth + 1);
