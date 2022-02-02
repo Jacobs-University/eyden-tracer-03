@@ -1,78 +1,86 @@
-// Sphere Geaometrical Primitive class
+// Triangle Geometrical Primitive class
 // Written by Sergey Kosov in 2005 for Rendering Competition
 #pragma once
 
 #include "IPrim.h"
 
-// ================================ Sphere Primitive Class ================================
+// ================================ Triangle Primitive Class ================================
 /**
- * @brief Sphere Geaometrical Primitive class
+ * @brief Triangle Geometrical Primitive class
  */
-class CPrimSphere : public IPrim
+class CPrimTriangle : public IPrim
 {
 public:
 	/**
 	 * @brief Constructor
-	 * @param pShader Pointer to the shader to be applied for the primitive
-	 * @param origin Position of the center of the sphere
-	 * @param radius Radius of the sphere
+	 * @param pShader Pointer to the shader to be applied for the prim
+	 * @param a Position of the first vertex
+	 * @param b Position of the second vertex
+	 * @param c Position of the third vertex
 	 */
-	CPrimSphere(ptr_shader_t pShader, Vec3f origin, float radius)
+	CPrimTriangle(ptr_shader_t pShader, const Vec3f& a, const Vec3f& b, const Vec3f& c)
 		: IPrim(pShader)
-		, m_origin(origin)
-		, m_radius(radius)
+		, m_a(a)
+		, m_b(b)
+		, m_c(c)
+		, m_edge1(b - a)
+		, m_edge2(c - a)
 	{}
-	virtual ~CPrimSphere(void) = default;
+	virtual ~CPrimTriangle(void) = default;
 
 	virtual bool intersect(Ray& ray) const override
 	{
-		// mathematical derivation, numerically not very stable, but simple
+		const Vec3f edge1 = m_b - m_a;
+		const Vec3f edge2 = m_c - m_a;
 
-		// --> find roots of f(t) = ((R+tD)-C)^2 - r^2
-		// f(t) = (R-C)^2 + 2(R-C)(tD) + (tD)^2 -r^2
-		// --> f(t) = [D^2] t^2 + [2D(R-C)] t + [(R-C)^2 - r^2]
-		Vec3f diff = ray.org - m_origin;
-		float a = ray.dir.dot(ray.dir);
-		float b = 2 * ray.dir.dot(diff);
-		float c = diff.dot(diff) - m_radius * m_radius;
+		const Vec3f pvec = ray.dir.cross(edge2);
 
-		// use 'abc'-formula for finding root t_1,2 = (-b +/- sqrt(b^2-4ac))/(2a)
-		float inRoot = b * b - 4 * a * c;
-		if (inRoot < 0) return false;
-		float root = sqrtf(inRoot);
+		const float det = edge1.dot(pvec);
+		if (fabs(det) < Epsilon) return false;
 
-		float dist = (-b - root) / (2 * a);
-		if (dist > ray.t)
-			return false;
+		const float inv_det = 1.0f / det;
 
-		if (dist < Epsilon) {
-			dist = (-b + root) / (2 * a);
-			if (dist < Epsilon || dist > ray.t)
-				return false;
-		}
+		const Vec3f tvec = ray.org - m_a;
+		float lambda = tvec.dot(pvec);
+		lambda *= inv_det;
 
-		ray.t = dist;
+		if (lambda < 0.0f || lambda > 1.0f) return false;
+
+		const Vec3f qvec = tvec.cross(edge1);
+		float mue = ray.dir.dot(qvec);
+		mue *= inv_det;
+
+		if (mue < 0.0f || mue + lambda > 1.0f) return false;
+
+		float f = edge2.dot(qvec);
+		f *= inv_det;
+		if (ray.t <= f || f < Epsilon) return false;
+
+		ray.t = f;
 		ray.hit = shared_from_this();
 		return true;
 	}
 
 	virtual Vec3f getNormal(const Ray& ray) const override
 	{
-		Vec3f hit = ray.org + ray.t * ray.dir;
-		Vec3f normal = hit - m_origin;
-		normal = normalize(normal);
-		return normal;
+		return normalize(m_edge1.cross(m_edge2));
 	}
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+        res.extend(m_a);
+        res.extend(m_b);
+        res.extend(m_c);
 		return res;
 	}
 
 
 private:
-	Vec3f m_origin;	///< Position of the center of the sphere
-	float m_radius;	///< Radius of the sphere
+	Vec3f m_a;		///< Position of the first vertex
+	Vec3f m_b;		///< Position of the second vertex
+	Vec3f m_c;		///< Position of the third vertex
+	Vec3f m_edge1;	///< Edge AB
+	Vec3f m_edge2;	///< Edge AC
 };

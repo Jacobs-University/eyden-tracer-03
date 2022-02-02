@@ -2,7 +2,7 @@
 **Dealine**: 28.10.2021
 
 Please put your name here:  
-**Name:** .......
+**Name:** Mahmoud El Bergui
 ## Problem 1
 ### Rendering complex geometry (Points 5)
 Until now we have only hardcoded our scene geometry in main.cpp. This is of course not practical. In the new framework, a class ```CSolid``` is added. This class may contain complex geometry formed by multiple primitives. Such geometry may be saved / read from an .obj file. For this problem we will read _torus knot.obj_ file and rended this object, which consists of 12 960 triangles. To make the method work proceed as follows:
@@ -11,7 +11,7 @@ Until now we have only hardcoded our scene geometry in main.cpp. This is of cour
 3. Have a look at the file _torus knot.obj_ and at the class ```CSolid```. Study how triangles are stored in the obj-format and in the class. The _v_ ’s indicate a single 3d-vertex position, and the _f_ ’s (faces) are indecies to 3 vertex numbers a triangle consits of (please note that the face indecies are starting with **1 and not 0**).
 4. Implement function ```CScene::add(const CSolid& solid)``` which adds a solid to the scene.
 5. Make sure that you work with Release and not Debug and disable BSP support in CMake (if it was enabled). Render the scene and write the time needed for 1 frame below:<br>
-**T0:** .......
+**T0:** 9:4'898 ms
 
 > **Note:** Rendering may take several minutes.
 
@@ -29,7 +29,7 @@ In order to use not one but all cores of CPU proceed as follows:
 1. Study the OpenCV function for parallel data processing ```parallel_for_```: [How to use the OpenCV parallel_for_ to parallelize your code](https://docs.opencv.org/master/d7/dff/tutorial_how_to_use_OpenCV_parallel_for_.html)
 2. In main.cpp file rewrite the main rendering loop (lines 53 - 57), by paralellizing the loop ```for (int y = 0; y < img.rows; y++)``` with help of ```parallel_for_``` function and enclosing the inner body into a lambda-expression. You do not need to parallelize the inner loop ```for (int x = 0; x < img.cols; x++)```.
 3. Render the scene and write the time needed for 1 frame T1 and speedup = T0 / T1 below:<br>
-**T1:** .......<br>
+**T1:** 2:2'873 ms<br>
 **Speedup:** .......
 
 ## Problem 3
@@ -52,7 +52,7 @@ If everything so far was implemented correctly, the Scene bounds will be: [-6, 0
 For more information please read the chapter 7.2 in the [thesis of Dr. Ingo Wald](http://www.sci.utah.edu/~wald/PhD/wald_phd.pdf).
 6. Implement the method ```std::shared_ptr<CBSPNode> build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)``` of the class ```CBSPTree```. Use the ideas presented at the lecture. As soon as you have reached a maximum depth (_e.g._ 20), or you have less then a minimum number of primitives (_e.g._ 3 or 4), stop subdividing and generate a leaf node. Otherweise, split your bounding box in the middle (in the maximum dimension), sort your current primitives into two vector left and right, and recursively call BuildTree with the respective bounding boxes and vector for left and right. Start subdivision with a list of all primitives, the total scene bounds, and an initial recursion depth of 0.<br>
 9. Render the scene and write the time needed for 1 frame T2 and speedup = T0 / T2 below:<br>
-**T2:** .......<br>
+**T2:**2'098 ms<br>
 **Speedup:** .......
 
 > A the solution for this problem can be found in OpenRT library: www.openrt.org However it is highly recommended to solve this problem using lecture slides only and resorting to the solution only as a last resort. 
@@ -60,6 +60,9 @@ For more information please read the chapter 7.2 in the [thesis of Dr. Ingo Wald
 Instead of optimizing too much, rather concentrate on a stable, bug-free implementation.
 
 ## Problem 4
+
+I didn't get how to do this part, I would be glad if you can show me how to do it :)
+
 ### Optimization of the KD-Tree build algorithm (Points 50)
 The performace of ray traversal in a kd-tree highly depends on the structure of a particular tree. For the same scene it is possible to build a kd-tree in multiple ways. For this problem we will research the tree building algorithm and try to ptimize it.
 The core idea of the kd-tree building algorithm is splitting a current bounding box into 2 leafs. For that purpose on the lectures we have considered splitting dimension _splitDim_ to be the maximum dimension of the bounding box and splitting value _splitVal_ to be the center of of the box in that dimension.
@@ -68,6 +71,7 @@ The core idea of the kd-tree building algorithm is splitting a current bounding 
 3. Experiment with your ideas. Chose the one, which gives the fastest result and render the scene and write the time needed for 1 frame T3 and speedup = T0 / T3 below:<br>
 **T3:** .......<br>
 **Speedup:** .......
+
 
 ## Submission
 Please submit the assignment by making a pull request.
