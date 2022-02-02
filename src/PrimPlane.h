@@ -43,8 +43,18 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
-		CBoundingBox bounds;
-		// --- PUT YOUR CODE HERE ---
+		Vec3f Minpoints = Vec3f::all(-INFINITY);
+		Vec3f Maxpoints = Vec3f::all(INFINITY);
+		//check which direction the plane faces
+		for (int i = 0; i < 3; i++) {
+			if (m_normal[i] == 1) {
+				/*Maxpoints[i] = 0;
+				Minpoints[i] = 0;*/
+				Maxpoints[i] = m_origin[i];
+				Minpoints[i] = m_origin[i];
+			}
+		}
+		CBoundingBox bounds(Maxpoints, Minpoints);
 		return bounds;
 	}
 

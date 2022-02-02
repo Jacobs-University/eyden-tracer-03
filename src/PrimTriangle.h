@@ -1,9 +1,18 @@
 // Triangle Geometrical Primitive class
 // Written by Sergey Kosov in 2005 for Rendering Competition
 #pragma once
-
 #include "IPrim.h"
+namespace {
+	inline Vec3f Min3f(const Vec3f a, const Vec3f b, const Vec3f c)
+	{
+		return Vec3f(MIN(a.val[0], b.val[0], c.val[0]), MIN(a.val[1], b.val[1], c.val[1]), MIN(a.val[2], b.val[2], c.val[2]));
+	}
 
+	inline Vec3f Max3f(const Vec3f a, const Vec3f b, const Vec3f c)
+	{
+		return Vec3f(MAX(a.val[0], b.val[0], c.val[0]), MAX(a.val[1], b.val[1], c.val[1]), MAX(a.val[2], b.val[2], c.val[2]));
+	}
+}
 // ================================ Triangle Primitive Class ================================
 /**
  * @brief Triangle Geometrical Primitive class
@@ -68,9 +77,10 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
-		CBoundingBox res;
-		// --- PUT YOUR CODE HERE ---
-		return res;
+		auto MinPoints = Min3f(m_a, m_b, m_c);
+		auto MaxPoints = Max3f(m_a, m_b, m_c);
+		CBoundingBox res(MinPoints, MaxPoints);
+ 		return res;
 	}
 
 

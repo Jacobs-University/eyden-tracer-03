@@ -11,6 +11,10 @@ namespace {
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		for (auto EachPrim : vpPrims) {
+			res.extend(EachPrim->getBoundingBox());
+		}
+		return res;
 	}
 
 	// Returns the best dimension index for next split
@@ -40,6 +44,15 @@ public:
 	 * @param minPrimitives The minimum number of primitives in a leaf-node.
 	 * This parameters should be alway above 1.
 	 */
+	/*
+		As soon as you have reached a maximum depth (e.g. 20), 
+		or you have less then a minimum number of primitives (e.g. 3 or 4), 
+		stop subdividing and generate a leaf node. Otherweise, 
+		split your bounding box in the middle (in the maximum dimension), 
+		sort your current primitives into two vector left and right, 
+		and recursively call BuildTree with the respective bounding boxes and vector for left and right. 
+		Start subdivision with a list of all primitives, the total scene bounds, and an initial recursion depth of 0.
+	*/
 	void build(const std::vector<ptr_prim_t>& vpPrims, size_t maxDepth = 20, size_t minPrimitives = 3) {
 		m_treeBoundingBox = calcBoundingBox(vpPrims);
 		m_maxDepth = maxDepth;
@@ -55,7 +68,15 @@ public:
 	bool intersect(Ray& ray) const
 	{
 		// --- PUT YOUR CODE HERE ---
-		return false;
+		
+		double t0 = 0;
+		double t1 = ray.t;
+		m_treeBoundingBox.clip(ray, t0, t1);
+		if (t1 < t0) return false;  
+
+		return m_root->intersect(ray, t0, t1);
+
+		//return false;
 	}
 
 
@@ -69,33 +90,62 @@ private:
 	 */
 	ptr_bspnode_t build(const CBoundingBox& box, const std::vector<ptr_prim_t>& vpPrims, size_t depth)
 	{
-		// Check for stoppong criteria
-		if (depth >= m_maxDepth || vpPrims.size() <= m_minPrimitives)
-			return std::make_shared<CBSPNode>(vpPrims);                                     // => Create a leaf node and break recursion
-
-		// else -> prepare for creating a branch node
-		// First split the bounding volume into two halfes
-		int     splitDim = MaxDim(box.getMaxPoint() - box.getMinPoint());                   // Calculate split dimension as the dimension where the aabb is the widest
-		float   splitVal = (box.getMinPoint()[splitDim] + box.getMaxPoint()[splitDim]) / 2; // Split the aabb exactly in two halfes
-		auto    splitBoxes = box.split(splitDim, splitVal);
-		CBoundingBox& lBox = splitBoxes.first;
-		CBoundingBox& rBox = splitBoxes.second;
-
-		// Second order the primitives into new nounding boxes
-		std::vector<ptr_prim_t> lPrim;
-		std::vector<ptr_prim_t> rPrim;
-		for (auto pPrim : vpPrims) {
-			if (pPrim->getBoundingBox().overlaps(lBox))
-				lPrim.push_back(pPrim);
-			if (pPrim->getBoundingBox().overlaps(rBox))
-				rPrim.push_back(pPrim);
+		//first check if we need to build branch instead of returning single node
+		if (depth >= m_maxDepth || vpPrims.size() <= m_minPrimitives) {
+			return std::make_shared<CBSPNode>(vpPrims);
 		}
+		/*
+			we need to have splitDim and splitval 
+			MaxDim for retuning best index
+			split value according to the target dimensions value
+		*/
+		std::cout << "size of vectors " << vpPrims.size() << std::endl;
+		int splitDim = MaxDim(box.getMaxPoint() - box.getMinPoint());
+		auto MaxPoint = box.getMaxPoint();
+		auto MinPoint = box.getMinPoint();
+		//float splitVal = (MaxPoint[splitDim] - MinPoint[splitDim]) / 2.0f;
+		float splitVal = (MaxPoint[splitDim] + MinPoint[splitDim]) / 2.0f;
+		/*std::cout << "Max Point " << MaxPoint << " Min Point" << MinPoint << std::endl;
+		std::cout << "splitdim " << splitDim << " splitval " << splitVal << std::endl;
+		*/
+		
+		/*
+			build branch
+			CBSPNode(int splitDim, float splitVal, ptr_bspnode_t left, ptr_bspnode_t right)
+			: CBSPNode(std::nullopt, splitDim, splitVal, left, right)
+			{}
+		*/
+		std::pair<CBoundingBox, CBoundingBox> SplitPair = box.split(splitDim, splitVal);
+		auto LeftBox = SplitPair.first;
+		auto RightBox = SplitPair.second;
+		/*
+			sort current prims
+			check if leftbox and rightbox overlaps with each prims
+		*/
+		std::vector <ptr_prim_t> PrimsForLeft;
+		std::vector <ptr_prim_t> PrimsForRight;
+		for (auto EachPrim : vpPrims) {
+			//if overlap with left box then added to left box's prims, same to the right
+			/*if (LeftBox.overlaps(EachPrim->getBoundingBox())) {
+				PrimsForLeft.push_back(EachPrim);
+			}
+			if (LeftBox.overlaps(EachPrim->getBoundingBox())) {
+				PrimsForRight.push_back(EachPrim);
+			}*/
+			if (EachPrim->getBoundingBox().overlaps(LeftBox)) {
+				PrimsForLeft.push_back(EachPrim);
+			}
+			if (EachPrim->getBoundingBox().overlaps(RightBox)) {
+				PrimsForRight.push_back(EachPrim);
+			}
 
-		// Next build recursively 2 subtrees for both halfes
-		auto pLeft = build(lBox, lPrim, depth + 1);
-		auto pRight = build(rBox, rPrim, depth + 1);
+		}
+		//building branches to next right and left by boxes constructed above
+		auto NextLeft = build(LeftBox, PrimsForLeft, depth + 1);
+		auto NextRight = build(RightBox, PrimsForRight, depth + 1);
+		auto NextBranch = std::make_shared<CBSPNode>(splitDim, splitVal, NextLeft, NextRight);
 
-		return std::make_shared<CBSPNode>(splitDim, splitVal, pLeft, pRight);
+		return NextBranch;
 	}
 
 	

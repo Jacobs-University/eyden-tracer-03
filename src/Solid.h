@@ -32,6 +32,7 @@ public:
 				std::stringstream ss(line);
 				getline(ss, line, ' ');
 				if (line == "v") {
+					//single 3-d vertex position
 					Vec3f v;
 					for (int i = 0; i < 3; i++) ss >> v.val[i];
 					// std::cout << "Vertex: " << v << std::endl;
@@ -48,6 +49,7 @@ public:
 					vNormals.push_back(vn);
 				}
 				else if (line == "f") {
+					//faces, 3 vertex numbers a triangle consist of
 					nFaces++;
 					//if (nFaces > 10000) continue;
 					int v, n, t;

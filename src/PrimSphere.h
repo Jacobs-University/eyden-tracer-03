@@ -66,8 +66,12 @@ public:
 
 	virtual CBoundingBox getBoundingBox(void) const override
 	{
-		CBoundingBox res;
+		Vec3f MinPoints = m_origin - Vec3f::all(m_radius);
+		Vec3f MaxPoints = m_origin + Vec3f::all(m_radius);
+
+		CBoundingBox res(MinPoints, MaxPoints);
 		// --- PUT YOUR CODE HERE ---
+		
 		return res;
 	}
 
