@@ -3,6 +3,10 @@
 #pragma once
 
 #include "types.h"
+#include "BSPNode.h"
+#include "BoundingBox.h"
+#include "IPrim.h"
+#include "ray.h"
 
 class CBSPNode;
 using ptr_bspnode_t = std::shared_ptr<CBSPNode>;
@@ -48,11 +52,86 @@ public:
 	{
 		if (isLeaf()) {
 			// --- PUT YOUR CODE HERE ---
-			return false;
-		} else {
-			// --- PUT YOUR CODE HERE ---
-			return false;
+			for (auto EachPrim : m_vpPrims) {
+				//if (EachPrim->intersect(ray)) {
+				EachPrim->intersect(ray);
+					//return true;
+				//}
+			}
+			return (ray.hit && ray.t < t1 + Epsilon);
+			//return false;
+		} 
+		else {
+		/*	
+			Each branch node has two children, there are only 3 cases for sub - node intersections :
+				intersecting with the left child only
+				intersecting with the right child only
+				both
+			update ray.t
+		*/
+			// check for left and right child if anyone hits
+			/*if (Left()->intersect(ray, t0, t1)) { return true; };
+			if (Right()->intersect(ray, t0, t1)) { return true; };
+			return false;*/
+
+			//DistanceFromOriToSplitePlane and the value ray needs
+			double Distance = m_splitVal - ray.org[m_splitDim];
+			double RayValue = Distance / ray.dir[m_splitDim];
+			//if the ray direction of the splitdimension is negative meaning the distance is also opposite
+			/*if (ray.dir[m_splitDim] < 0) {
+				auto FrontNode = Right() ;
+				auto BackNode = Left();
+			}
+			else {
+				auto FrontNode = Left();
+				auto BackNode = Right();
+			}*/
+			auto FrontNode = (ray.dir[m_splitDim] < 0) ? Right() : Left();
+			auto BackNode = (ray.dir[m_splitDim] < 0) ? Left() : Right();
+
+			//consider three cases
+			if (t0 >= RayValue) {
+				//meaning the distance ray hit to the splite value is at the left/back
+				return BackNode->intersect(ray, t0, t1);
+			}
+			else if (t1 <= RayValue) {
+				return FrontNode->intersect(ray, t0, t1);
+			}
+			else {
+				// travese both children. front one first, back one last
+				if (FrontNode->intersect(ray, t0, RayValue))
+					return true;
+				return BackNode->intersect(ray, RayValue, t1);
+			}
 		}
+		//if (isLeaf()) {
+		//	for (auto& pPrim : m_vpPrims)
+		//		pPrim->intersect(ray);
+		//	return (ray.hit && ray.t < t1 + Epsilon);
+		//}
+		//else {
+		//	// distance from ray origin to the split plane of the current volume (may be negative)
+		//	double d = (m_splitVal - ray.org[m_splitDim]) / ray.dir[m_splitDim];
+
+		//	auto frontNode = (ray.dir[m_splitDim] < 0) ? Right() : Left();
+		//	auto backNode = (ray.dir[m_splitDim] < 0) ? Left() : Right();
+
+		//	if (d <= t0) {
+		//		// t0..t1 is totally behind d, only go to back side
+		//		return backNode->intersect(ray, t0, t1);
+		//	}
+		//	else if (d >= t1) {
+		//		// t0..t1 is totally in front of d, only go to front side
+		//		return frontNode->intersect(ray, t0, t1);
+		//	}
+		//	else {
+		//		// travese both children. front one first, back one last
+		//		if (frontNode->intersect(ray, t0, d))
+		//			return true;
+
+		//		return backNode->intersect(ray, d, t1);
+		//	}
+		//}
 	}
 
 	/**

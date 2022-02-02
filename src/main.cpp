@@ -14,6 +14,7 @@
 #include "LightOmni.h"
 #include "timer.h"
 
+
 Mat RenderFrame(void)
 {
 	// Camera resolution
@@ -48,14 +49,24 @@ Mat RenderFrame(void)
 	scene.add(std::make_shared<CLightOmni>(pointLightIntensity, lightPosition3));
 
 	Mat img(resolution, CV_32FC3);							// image array
-	Ray ray;                                          		// primary ray
+	//Ray ray;                                          		// primary ray
 
-	for (int y = 0; y < img.rows; y++)
-		for (int x = 0; x < img.cols; x++) {
-			scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
-			img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+	//for (int y = 0; y < img.rows; y++)
+	//	for (int x = 0; x < img.cols; x++) {
+	//		scene.getActiveCamera()->InitRay(ray, x, y);	// initialize ray
+	//		img.at<Vec3f>(y, x) = scene.RayTrace(ray);
+	//	}
+	//
+	parallel_for_(Range(0, img.rows), [&](const Range& range) {
+		for (int y = range.start; y < range.end; y++) {
+			// primary ray
+			Ray Localray;                                          		
+			for (int x = 0; x < img.cols; x++) {
+				scene.getActiveCamera()->InitRay(Localray, x, y);	// initialize ray
+				img.at<Vec3f>(y, x) = scene.RayTrace(Localray);
+			}
 		}
-	
+	});
 	img.convertTo(img, CV_8UC3, 255);
 	return img;
 }
@@ -67,6 +78,6 @@ int main(int argc, char* argv[])
 	DirectGraphicalModels::Timer::stop();
 	imshow("Image", img);
 	waitKey();
-	imwrite("D:/renders/torus knot.jpg", img);
+	imwrite("torus knot with BSP.jpg", img);
 	return 0;
 }
