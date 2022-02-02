@@ -45,6 +45,8 @@ public:
 	{
 		CBoundingBox bounds;
 		// --- PUT YOUR CODE HERE ---
+        bounds.extend(Vec3f::all(Infty));
+        bounds.extend(Vec3f::all(-Infty));
 		return bounds;
 	}
 
